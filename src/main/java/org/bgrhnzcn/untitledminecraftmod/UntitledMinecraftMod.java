@@ -15,6 +15,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.bgrhnzcn.untitledminecraftmod.block.ModBlocks;
+import org.bgrhnzcn.untitledminecraftmod.item.ModCreativeModTabs;
+import org.bgrhnzcn.untitledminecraftmod.item.ModItems;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -28,16 +31,28 @@ public class UntitledMinecraftMod {
     public UntitledMinecraftMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        //Calling registers of classes.
+        ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+
+        modEventBus.addListener(this::addCreative);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
-        LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
+
+    }
+
+    //Creative Tab adds.
+    private void addCreative(CreativeModeTabEvent.BuildContents event){
+        if(event.getTab() == ModCreativeModTabs.UNTITLED_TAB){
+            event.accept(ModItems.RAW_TEST_ORE);
+            event.accept(ModItems.TEST_INGOT);
+            event.accept(ModBlocks.TEST_INGOT_BLOCK);
+        }
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
