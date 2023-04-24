@@ -3,6 +3,7 @@ package org.bgrhnzcn.untitledminecraftmod.block;
 
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -21,20 +22,29 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, UntitledMinecraftMod.MOD_ID);
 
     //This part adds blocks
-    public static final RegistryObject<Block> TEST_INGOT_BLOCK = registerBlock("test_ingot_block",
+    public static final RegistryObject<Block> TEST_INGOT_BLOCK = registerFireResBlock("test_ingot_block",
             () -> new Block(BlockBehaviour.Properties.of(Material.METAL).strength(6f).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> TEST_ORE = registerBlock("test_ore",
             () -> new Block(BlockBehaviour.Properties.of(Material.METAL).strength(6f).requiresCorrectToolForDrops()));
 
     //Helper methods with generics.
+    private static <T extends Block> RegistryObject<T> registerFireResBlock(String name, Supplier<T> block){
+        RegistryObject<T> toReturn = BLOCKS.register(name,block);
+        registeryFireResBlockItem(name,toReturn);
+        return toReturn;
+    }
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block){
         RegistryObject<T> toReturn = BLOCKS.register(name,block);
-        registeryBlockItem(name,toReturn);
+        registeryFireResBlockItem(name,toReturn);
         return toReturn;
+    }
+    private static  <T extends Block> RegistryObject<Item> registeryFireResBlockItem(String name, RegistryObject<T> block){
+        return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(),
+                new Item.Properties().fireResistant()));/*fire res test?*/
     }
     private static  <T extends Block> RegistryObject<Item> registeryBlockItem(String name, RegistryObject<T> block){
         return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(),
-                new Item.Properties().fireResistant()));/*fire res test?*/
+                new Item.Properties()));/*fire res test?*/
     }
     //Basic register() method.
     public static void register(IEventBus eventBus){
